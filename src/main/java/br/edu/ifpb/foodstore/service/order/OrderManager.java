@@ -1,5 +1,7 @@
 package br.edu.ifpb.foodstore.service.order;
 
+import br.edu.ifpb.foodstore.STATE.EstadosDoPedido;
+import br.edu.ifpb.foodstore.STATE.PedidoEnum;
 import br.edu.ifpb.foodstore.STRATEGY.Pagamento;
 import br.edu.ifpb.foodstore.domain.Order;
 import br.edu.ifpb.foodstore.service.log.LogService;
@@ -15,6 +17,7 @@ public class OrderManager {
     private final PaymentService paymentService;
     private final MailNotification mailNotification;
     private final LogService logService;
+    private EstadosDoPedido estadoAutal;
 
     public void payOrder(Order order, Pagamento paymentType ) {
         order.setStatus(Order.OrderStatus.IN_PROGRESS);
@@ -33,20 +36,14 @@ public class OrderManager {
     }
 
     public void cancelOrder(Order order) throws OrderException {
-        switch(order.getStatus()) {
-            case CANCELED:
-                throw new OrderException("Order already canceled!");
-            case IN_PROGRESS:
-                logService.info("Canceling in progress order");
-                break;
-            case PAYMENT_REFUSED:
-                logService.info("Canceling refused order");
-                break;
-            case PAYMENT_SUCCESS:
-                logService.info("Canceling already paid order");
-                break;
-        }
-        order.setStatus(Order.OrderStatus.CANCELED);
+
+        String status = order.getStatus().toString();
+        estadoAutal = PedidoEnum.valueOf(status);
+        PedidoEnum pedidoCancelado = (PedidoEnum) estadoAutal.cancelar(logService);
+
+        status = pedidoCancelado.toString();
+
+        order.setStatus(Order.OrderStatus.valueOf(status));
         mailNotification.sendMailNotificationToAdmin(String.format("Order %d canceled", order.getId()));
         mailNotification.sendMailNotificationToCustomer(String.format("Order %d canceled", order.getId()), order.getCustomer());
         logService.debug(String.format("order %d canceled", order.getId()));
