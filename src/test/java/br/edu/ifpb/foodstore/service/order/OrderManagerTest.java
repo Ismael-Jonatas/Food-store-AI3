@@ -74,6 +74,7 @@ public class OrderManagerTest {
         InOrder orderVerifier = Mockito.inOrder(paymentService, mailNotification, logService);
         orderVerifier.verify(paymentService).doPayment();
         orderVerifier.verify(mailNotification).sendMailNotificationToAdmin("Order 1 completed successfully");
+
         orderVerifier.verify(mailNotification).sendMailNotificationToCustomer("Order 1 completed successfully", order.getCustomer());
         orderVerifier.verify(logService).info("payment finished");
     }
