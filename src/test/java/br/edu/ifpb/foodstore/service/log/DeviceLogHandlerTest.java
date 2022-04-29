@@ -1,5 +1,8 @@
 package br.edu.ifpb.foodstore.service.log;
 
+import br.edu.ifpb.foodstore.BRIDGE.DeviceLog;
+import br.edu.ifpb.foodstore.BRIDGE.DeviceLogDatabase;
+import br.edu.ifpb.foodstore.BRIDGE.DeviceLogFile;
 import br.edu.ifpb.foodstore.domain.LogRegister;
 import br.edu.ifpb.foodstore.repository.LogRegisterRepository;
 import lombok.SneakyThrows;
@@ -26,7 +29,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class LogHandlerTest {
+public class DeviceLogHandlerTest {
 
     @SpyBean
     private LogHandler logHandler;
@@ -41,10 +44,11 @@ public class LogHandlerTest {
     @SneakyThrows
     @Test
     void logTest_database() {
+        DeviceLog logFileDatabase = new DeviceLogDatabase(logRegisterRepository);
         // Atribui a propriedade type em LogHandler a ter o valor DATABASE
         ReflectionTestUtils.setField(logHandler, // injeta propriedade nesse objeto
-                "type", // campo a ser sobrescrito
-                LogHandler.LogHandlerType.DATABASE); // objeto a ser injetado
+                "logDevice", // campo a ser sobrescrito
+                logFileDatabase); // objeto a ser injetado
 
         Calendar calendar = mock(Calendar.class);
         // É necessário fazer mock da chamada estática Calendar.getInstance() para que corresponda ao objeto criado no teste
@@ -53,7 +57,7 @@ public class LogHandlerTest {
             LogRegister logRegister = new LogRegister();
             logRegister.setMessage("test message");
             logRegister.setDate(calendar);
-            logHandler.log("test message");
+            logHandler.criandoLog("test message");
             InOrder orderVerifier = Mockito.inOrder(logRegisterRepository);
             orderVerifier.verify(logRegisterRepository).save(logRegister);
         }
@@ -62,10 +66,11 @@ public class LogHandlerTest {
     @SneakyThrows
     @Test
     void logTest_file() {
+        DeviceLog logFile = new DeviceLogFile();
         // Atribui a propriedade type em LogHandler a ter o valor FILE
         ReflectionTestUtils.setField(logHandler, // injeta propriedade nesse objeto
-                "type", // campo a ser sobrescrito
-                LogHandler.LogHandlerType.FILE); // objeto a ser injetado
+                "logDevice", // campo a ser sobrescrito
+                logFile); // objeto a ser injetado
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -75,7 +80,7 @@ public class LogHandlerTest {
             mocked.when(Calendar::getInstance).thenReturn(calendar);
             Date date = format.parse("2022-04-16 07:47:31");
             when(calendar.getTime()).thenReturn(date);
-            logHandler.log("test message");
+            logHandler.criandoLog("test message");
             File file = new File("/tmp/log.log");
             assertTrue(file.exists());
             assertThat(Files.readString(file.toPath()), Matchers.equalTo(String.format("%s: %s\n", "2022-04-16 07:47:31", "test message")));

@@ -10,7 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 @SpringBootTest
-public class LogServiceTest {
+public class DeviceLogServiceTest {
 
     @MockBean
     private LogHandler logHandler;
@@ -27,8 +27,8 @@ public class LogServiceTest {
     void debugTest() {
         logService.debug("debug message");
         InOrder orderVerifier = Mockito.inOrder(logHandler);
-        orderVerifier.verify(logHandler).log("debug");
-        orderVerifier.verify(logHandler).log("debug message");
+        orderVerifier.verify(logHandler).criandoLog("debug");
+        orderVerifier.verify(logHandler).criandoLog("debug message");
     }
 
     @SneakyThrows
@@ -36,7 +36,7 @@ public class LogServiceTest {
     void infoTest() {
         logService.debug("info message");
         InOrder orderVerifier = Mockito.inOrder(logHandler);
-        orderVerifier.verify(logHandler).log("info message");
+        orderVerifier.verify(logHandler).criandoLog("info message");
     }
 
     @SneakyThrows
@@ -44,8 +44,8 @@ public class LogServiceTest {
     void errorTest() {
         logService.error("error message");
         InOrder orderVerifier = Mockito.inOrder(logHandler);
-        orderVerifier.verify(logHandler).log("error");
-        orderVerifier.verify(logHandler).log("error message");
+        orderVerifier.verify(logHandler).criandoLog("error");
+        orderVerifier.verify(logHandler).criandoLog("error message");
     }
 
 }

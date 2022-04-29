@@ -10,16 +10,16 @@ public class LogService {
     private final LogHandler logHandler;
 
     public void debug(String message) {
-        logHandler.log("debug");
-        logHandler.log(message);
+        logHandler.criandoLog("debug");
+        logHandler.criandoLog(message);
     }
 
-    public void info(String message) {
-        logHandler.log(message);
+    public void info(String message){
+        logHandler.criandoLog(message);
     }
-    public void error(String message) {
-        logHandler.log("error");
-        logHandler.log(message);
+    public void error(String message){
+        logHandler.criandoLog("error");
+        logHandler.criandoLog(message);
     }
 
 }

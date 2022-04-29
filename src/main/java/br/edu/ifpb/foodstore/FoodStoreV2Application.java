@@ -1,5 +1,8 @@
 package br.edu.ifpb.foodstore;
 
+import br.edu.ifpb.foodstore.BRIDGE.DeviceLog;
+import br.edu.ifpb.foodstore.BRIDGE.DeviceLogDatabase;
+import br.edu.ifpb.foodstore.BRIDGE.DeviceLogFile;
 import br.edu.ifpb.foodstore.repository.LogRegisterRepository;
 import br.edu.ifpb.foodstore.service.log.LogHandler;
 import org.springframework.boot.SpringApplication;
@@ -17,12 +20,14 @@ public class FoodStoreV2Application {
 	@Bean("logHandler")
 	@Primary
 	public LogHandler getLogHandlerDatabase(final LogRegisterRepository logRegisterRepository) {
-		return new LogHandler(logRegisterRepository, LogHandler.LogHandlerType.DATABASE);
+		DeviceLog logFileDatabase = new DeviceLogDatabase(logRegisterRepository);
+		return new LogHandler(logFileDatabase);
 	}
 
 	@Bean("logHandlerFile")
 	public LogHandler getLogHandlerFile() {
-		return new LogHandler(null, LogHandler.LogHandlerType.FILE);
+		DeviceLog logFile = new DeviceLogFile();
+		return new LogHandler(logFile);
 	}
 
 }
